@@ -221,7 +221,7 @@ def estimate_loss():
         losses = torch.zeros(eval_iters)
         acces = torch.zeros(eval_iters)
         for k in range(eval_iters):
-            X, Y = get_batch(val_dataloader, val=True)
+            X, Y = get_batch(val_dataloader, val=True if split == 'val' else False)
             with ctx:
                 logits, loss, acc = model(X, Y)
             losses[k] = loss.item()
@@ -275,8 +275,10 @@ while True:
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
-                "val/loss": losses['val'],
-                "val/accuracy": accuracies['val'],
+                "val_val/loss": losses['val'],
+                "val_val/accuracy": accuracies['val'],
+                "val_train/loss": losses['train'],
+                "val_train/accuracy": accuracies['train'],
                 "lr": lr,
                 "mfu": running_mfu*100, # convert to percentage
             })
