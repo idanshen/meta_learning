@@ -18,6 +18,7 @@ class ProjectData:
     def __init__(self, seq_len, num_tasks, input_dim, label_dim, device):
         self.seq_len = seq_len
         self.num_tasks = num_tasks
+        self.num_tasks_val = 512
         self.input_dim = input_dim
         self.label_dim = label_dim
 
@@ -25,7 +26,7 @@ class ProjectData:
         self.sigma = math.sqrt(1.0 / input_dim)
 
         self.train_random_projection = self.sigma * torch.randn(num_tasks, input_dim, input_dim, device='cpu', dtype=torch.bfloat16)
-        self.val_random_projection = self.sigma * torch.randn(num_tasks, input_dim, input_dim, device='cpu', dtype=torch.bfloat16)
+        self.val_random_projection = self.sigma * torch.randn(self.num_tasks_val, input_dim, input_dim, device='cpu', dtype=torch.bfloat16)
 
     def __call__(self, input, label, val=False):
         assert input.shape[0] % self.seq_len == 0, "Input should include batch X num_seq samples"
@@ -35,7 +36,7 @@ class ProjectData:
 
         # Project inputs
         if val:
-            indices = np.random.choice(self.num_tasks, b // self.seq_len, True)
+            indices = np.random.choice(self.num_tasks_val, b // self.seq_len, True)
             matrices = self.val_random_projection[indices, :, :].to(device=input.device, non_blocking=True)
         else:
             indices = np.random.choice(self.num_tasks, b // self.seq_len, True)
