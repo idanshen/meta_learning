@@ -43,7 +43,9 @@ class ProjectData:
             matrices = self.train_random_projection[indices, :, :].to(device=input.device, non_blocking=True)
 
         projected_input = torch.einsum("b s i, b i n -> b s n", input.type(torch.bfloat16), matrices)
-        # projected_input = input.type(torch.bfloat16)
+        # Normalize input
+        projected_input = (projected_input - torch.mean(projected_input)) / torch.std(projected_input)
+
         # Append zero to the beginning and cut out the last label
         one_hot_labels = F.one_hot(label, num_classes=self.label_dim).squeeze()
         to_concat = torch.concat([torch.zeros((b//self.seq_len, 1, self.label_dim), device=label.device), one_hot_labels[:,:-1,:]], dim=1)
