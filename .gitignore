@@ -6,3 +6,5 @@ wandb/
 profile.html
 
 profile.json
+
+__pycache__/
