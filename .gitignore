@@ -8,3 +8,7 @@ profile.html
 profile.json
 
 __pycache__/
+
+nohup.out
+
+*.pyc
