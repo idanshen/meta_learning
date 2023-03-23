@@ -64,7 +64,7 @@ bias = False # do we use bias inside LayerNorm and Linear layers?
 # adamw optimizer
 learning_rate = 6e-4 # max learning rate
 max_iters = 50000 # total number of training iterations
-weight_decay = 1e-1
+weight_decay = 0.01
 beta1 = 0.9
 beta2 = 0.95
 grad_clip = 1.0 # clip gradients at this value, or disable if == 0.0
@@ -275,10 +275,10 @@ while True:
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
-                "val_val/loss": losses['val'],
-                "val_val/accuracy": accuracies['val'],
-                "val_train/loss": losses['train'],
-                "val_train/accuracy": accuracies['train'],
+                "val_data_val_tasks/loss": losses['val'],
+                "val_data_val_tasks/accuracy": accuracies['val'],
+                "val_data_train_tasks/loss": losses['train'],
+                "val_data_train_tasks/accuracy": accuracies['train'],
                 "lr": lr,
                 "mfu": running_mfu*100, # convert to percentage
             })
@@ -342,8 +342,8 @@ while True:
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
-                "train/loss": lossf,
-                "train/accuracy": accf,
+                "train_data_train_tasks/loss": lossf,
+                "train_data_train_tasks/accuracy": accf,
                 "lr": lr,
             })
         print(f"iter {iter_num}: loss {lossf:.4f}, accuracy {accf:.4f}, time {dt*1000:.2f}ms, mfu {running_mfu*100:.2f}%")
