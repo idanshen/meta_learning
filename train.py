@@ -64,9 +64,10 @@ bias = False # do we use bias inside LayerNorm and Linear layers?
 # adamw optimizer
 learning_rate = 6e-4 # max learning rate
 max_iters = 50000 # total number of training iterations
-weight_decay = 0.01
+weight_decay = 0.1
 beta1 = 0.9
 beta2 = 0.95
+adam_eps = 1e-16
 grad_clip = 1.0 # clip gradients at this value, or disable if == 0.0
 # learning rate decay settings
 decay_lr = True # whether to decay the learning rate
@@ -115,8 +116,7 @@ ctx = nullcontext() if device_type == 'cpu' else torch.amp.autocast(device_type=
 input_size = 784
 label_size = 10
 data_dir = os.path.join('data', dataset)
-# train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
-# val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
+
 train_data = MNIST(
     root="data",
     train=True,
@@ -198,7 +198,7 @@ model.to(device)
 scaler = torch.cuda.amp.GradScaler(enabled=(dtype == 'float16'))
 
 # optimizer
-optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), device_type)
+optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), adam_eps, device_type)
 if init_from == 'resume':
     optimizer.load_state_dict(checkpoint['optimizer'])
 
